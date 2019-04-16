@@ -24,6 +24,7 @@ func newProcess(p specs.Process) (*libcontainer.Process, error) {
 		User:            fmt.Sprintf("%d:%d", p.User.UID, p.User.GID),
 		Cwd:             p.Cwd,
 		Label:           p.SelinuxLabel,
+		Init:            true,
 		NoNewPrivileges: &p.NoNewPrivileges,
 		AppArmorProfile: p.ApparmorProfile,
 	}

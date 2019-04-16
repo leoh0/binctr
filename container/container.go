@@ -10,6 +10,7 @@ import (
 	"github.com/coreos/go-systemd/activation"
 	"github.com/opencontainers/runc/libcontainer"
 	"github.com/opencontainers/runc/libcontainer/cgroups/systemd"
+	"github.com/opencontainers/runc/libcontainer/configs"
 	"github.com/opencontainers/runc/libcontainer/specconv"
 	specs "github.com/opencontainers/runtime-spec/specs-go"
 )
@@ -26,6 +27,8 @@ type Container struct {
 	NoPivotRoot      bool
 	NoNewKeyring     bool
 	Rootless         bool
+	HostNetwork      bool
+	ShareIPC         bool
 }
 
 // Run starts the container. It returns the exit status or -1 and an
@@ -65,6 +68,15 @@ func (c *Container) Run() (int, error) {
 	})
 	if err != nil {
 		return -1, err
+	}
+
+	if c.HostNetwork {
+		config.Namespaces.Remove(configs.NEWNET)
+		config.Networks = nil
+	}
+
+	if c.ShareIPC {
+		config.Namespaces.Remove(configs.NEWIPC)
 	}
 
 	// Setup the cgroups manager. Default is cgroupfs.

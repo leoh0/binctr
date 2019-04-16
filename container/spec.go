@@ -19,6 +19,7 @@ type SpecOpts struct {
 	Readonly bool
 	Terminal bool
 	Args     []string
+	Env      []string
 	Mounts   []specs.Mount
 	Hooks    *specs.Hooks
 }
@@ -55,6 +56,10 @@ func Spec(opts SpecOpts) *specs.Spec {
 
 	if opts.Args != nil {
 		spec.Process.Args = opts.Args
+	}
+
+	if opts.Env != nil {
+		spec.Process.Env = opts.Env
 	}
 
 	if opts.Mounts != nil {
